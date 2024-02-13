@@ -18,11 +18,10 @@ if (process.env.TESTNET == 'true') {
 if (process.env.FEE_PER_KB) {
     Transaction.FEE_PER_KB = parseInt(process.env.FEE_PER_KB)
 } else {
-    Transaction.FEE_PER_KB = 100000000
+    Transaction.FEE_PER_KB = 69000000
 }
 
 const WALLET_PATH = process.env.WALLET || '.wallet.json'
-
 
 async function main() {
     let cmd = process.argv[2]
@@ -31,7 +30,7 @@ async function main() {
         console.log('found pending-txs.json. rebroadcasting...')
         const txs = JSON.parse(fs.readFileSync('pending-txs.json'))
         await broadcastAll(txs.map(tx => new Transaction(tx)), false)
-        return 
+        return
     }
 
     if (cmd == 'mint') {
@@ -40,11 +39,73 @@ async function main() {
         await wallet()
     } else if (cmd == 'server') {
         await server()
+    } else if (cmd == 'drc-20') {
+        await doge20()
     } else {
         throw new Error(`unknown command: ${cmd}`)
     }
 }
 
+async function doge20() {
+  let subcmd = process.argv[3]
+
+  if (subcmd === 'mint') {
+    await doge20Transfer("mint")
+  } else if (subcmd === 'transfer') {
+    await doge20Transfer()
+  } else if (subcmd === 'deploy') {
+    await doge20Deploy()
+  } else {
+    throw new Error(`unknown subcommand: ${subcmd}`)
+  }
+}
+
+async function doge20Deploy() {
+  const argAddress = process.argv[4]
+  const argTicker = process.argv[5]
+  const argMax = process.argv[6]
+  const argLimit = process.argv[7]
+
+  const doge20Tx = {
+    p: "drc-20",
+    op: "deploy",
+    tick: `${argTicker.toLowerCase()}`,
+    max: `${argMax}`,
+    lim: `${argLimit}`
+  };
+
+  const parsedDoge20Tx = JSON.stringify(doge20Tx);
+
+  // encode the doge20Tx as hex string
+  const encodedDoge20Tx = Buffer.from(parsedDoge20Tx).toString('hex');
+
+  console.log("Deploying drc-20 token...");
+  await mint(argAddress, "text/plain;charset=utf-8", encodedDoge20Tx);
+}
+
+async function doge20Transfer(op = "transfer") {
+  const argAddress = process.argv[4]
+  const argTicker = process.argv[5]
+  const argAmount = process.argv[6]
+  const argRepeat = Number(process.argv[7]) || 1;
+
+  const doge20Tx = {
+    p: "drc-20",
+    op,
+    tick: `${argTicker.toLowerCase()}`,
+    amt: `${argAmount}`
+  };
+
+  const parsedDoge20Tx = JSON.stringify(doge20Tx);
+
+  // encode the doge20Tx as hex string
+  const encodedDoge20Tx = Buffer.from(parsedDoge20Tx).toString('hex');
+
+  for (let i = 0; i < argRepeat; i++) {
+    console.log("Minting drc-20 token...", i + 1, "of", argRepeat, "times");
+    await mint(argAddress, "text/plain;charset=utf-8", encodedDoge20Tx);
+  }
+}
 
 async function wallet() {
     let subcmd = process.argv[3]
@@ -165,11 +226,10 @@ async function walletSplit() {
 
 const MAX_SCRIPT_ELEMENT_SIZE = 520
 
-async function mint() {
-    const argAddress = process.argv[3]
-    const argContentTypeOrFilename = process.argv[4]
-    const argHexData = process.argv[5]
-
+async function mint(paramAddress, paramContentTypeOrFilename, paramHexData) {
+    const argAddress = paramAddress || process.argv[3]
+    const argContentTypeOrFilename = paramContentTypeOrFilename || process.argv[4]
+    const argHexData = paramHexData || process.argv[5]
 
     let address = new Address(argAddress)
     let contentType
@@ -205,20 +265,29 @@ async function broadcastAll(txs, retry) {
         console.log(`broadcasting tx ${i + 1} of ${txs.length}`)
 
         try {
-            throw new Error('hello')
             await broadcast(txs[i], retry)
         } catch (e) {
-            console.log('broadcast failed', e)
-            console.log('saving pending txs to pending-txs.json')
-            console.log('to reattempt broadcast, re-run the command')
-            fs.writeFileSync('pending-txs.json', JSON.stringify(txs.slice(i).map(tx => tx.toString())))
-            process.exit(1)
+          console.log('broadcast failed', e?.response.data)
+          if (e?.response?.data.error?.message?.includes("bad-txns-inputs-spent") || e?.response?.data.error?.message?.includes("already in block chain")) {
+            console.log('tx already sent, skipping')
+            continue;
+          }
+          console.log('saving pending txs to pending-txs.json')
+          console.log('to reattempt broadcast, re-run the command')
+          fs.writeFileSync('pending-txs.json', JSON.stringify(txs.slice(i).map(tx => tx.toString())))
+          process.exit(1)
         }
     }
 
-    fs.deleteFileSync('pending-txs.json')
+    try {
+      fs.unlinkSync('pending-txs.json')
+    } catch (err) {
+      // ignore
+    }
 
-    console.log('inscription txid:', txs[1].hash)
+    if (txs.length > 1) {
+      console.log('inscription txid:', txs[1].hash)
+    }
 }
 
 
@@ -247,14 +316,12 @@ function opcodeToChunk(op) {
 const MAX_CHUNK_LEN = 240
 const MAX_PAYLOAD_LEN = 1500
 
-
 function inscribe(wallet, address, contentType, data) {
     let txs = []
 
 
     let privateKey = new PrivateKey(wallet.privkey)
     let publicKey = privateKey.toPublicKey()
-
 
     let parts = []
     while (data.length) {
@@ -296,7 +363,6 @@ function inscribe(wallet, address, contentType, data) {
             inscription.chunks.unshift(partial.chunks.pop())
         }
 
-
         let lock = new Script()
         lock.chunks.push(bufferToChunk(publicKey.toBuffer()))
         lock.chunks.push(opcodeToChunk(Opcode.OP_CHECKSIGVERIFY))
@@ -305,22 +371,17 @@ function inscribe(wallet, address, contentType, data) {
         })
         lock.chunks.push(opcodeToChunk(Opcode.OP_TRUE))
 
-
-
         let lockhash = Hash.ripemd160(Hash.sha256(lock.toBuffer()))
-
 
         let p2sh = new Script()
         p2sh.chunks.push(opcodeToChunk(Opcode.OP_HASH160))
         p2sh.chunks.push(bufferToChunk(lockhash))
         p2sh.chunks.push(opcodeToChunk(Opcode.OP_EQUAL))
 
-
         let p2shOutput = new Transaction.Output({
             script: p2sh,
             satoshis: 100000
         })
-
 
         let tx = new Transaction()
         if (p2shInput) tx.addInput(p2shInput)
@@ -338,7 +399,6 @@ function inscribe(wallet, address, contentType, data) {
             tx.inputs[0].setScript(unlock)
         }
 
-
         updateWallet(wallet, tx)
         txs.push(tx)
 
@@ -355,9 +415,7 @@ function inscribe(wallet, address, contentType, data) {
 
         lastLock = lock
         lastPartial = partial
-
     }
-
 
     let tx = new Transaction()
     tx.addInput(p2shInput)
@@ -375,7 +433,6 @@ function inscribe(wallet, address, contentType, data) {
 
     updateWallet(wallet, tx)
     txs.push(tx)
-
 
     return txs
 }
@@ -481,14 +538,14 @@ async function extract(txid) {
     let chunks = script.chunks
 
 
-    let prefix = chunks.shift().buf.toString('utf8')
+    let prefix = chunks.shift().buf.toString('utf-8')
     if (prefix != 'ord') {
         throw new Error('not a doginal')
     }
 
     let pieces = chunkToNumber(chunks.shift())
 
-    let contentType = chunks.shift().buf.toString('utf8')
+    let contentType = chunks.shift().buf.toString('utf-8')
 
 
     let data = Buffer.alloc(0)
