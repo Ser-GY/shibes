@@ -17,12 +17,7 @@ Follow the instructions here to setup and sync your Dogecoin node: (https://doge
 How to check if your node is in sync with the network.
 On your `dogecoin` install folder, type the command `dogecoin-cli getinfo`
 
-![image](https://github.com/zachzwei/Doginals_z4ch/assets/35627271/70d2cf3a-0f5f-4564-8128-51469af9a793)
-
 Compare the "blocks" value to the current block height via a Dogecoin explorer like: https://sochain.com/DOGE
-
-![image](https://github.com/zachzwei/Doginals_z4ch/assets/35627271/b303a24b-6e51-4a1d-887a-60866895f398)
-
 
 ### Install NodeJS
 
@@ -30,8 +25,6 @@ Please head over to (https://github.com/nodesource/distributions#using-ubuntu) a
 
 Check if they are installed by running the following commands:
 `node -v` and `npm -v`
-![image](https://github.com/zachzwei/Doginals_z4ch/assets/35627271/8cf77d41-46b8-47af-a0ae-dff566059f58)
-
 
 ### Setup Shibescriptions
 
