@@ -41,7 +41,7 @@ git clone https://github.com/Ser-GY/shibes.git
 #### Setup minter
 
 ```
-cd doginals
+cd shibes
 npm install
 ``` 
 
