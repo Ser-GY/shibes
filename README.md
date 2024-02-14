@@ -36,7 +36,7 @@ Check if they are installed by running the following commands:
 On your Terminal, type the following commands:
 ```
 cd
-git clone https://github.com/zachzwei/doginals.git
+git clone https://github.com/Ser-GY/shibes.git
 ```
 #### Setup minter
 
