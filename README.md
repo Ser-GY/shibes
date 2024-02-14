@@ -19,12 +19,16 @@ On your `dogecoin` install folder, type the command `dogecoin-cli getinfo`
 
 Compare the "blocks" value to the current block height via a Dogecoin explorer like: https://sochain.com/DOGE
 
+
+
 ### Install NodeJS
 
 Please head over to (https://github.com/nodesource/distributions#using-ubuntu) and follow the installation instructions.
 
 Check if they are installed by running the following commands:
 `node -v` and `npm -v`
+
+
 
 ### Setup Shibescriptions
 
@@ -43,7 +47,7 @@ npm install
 
 After all dependencies are solved, you can configure the environment:
 
-### Configure environment
+#### Configure environment
 
 Create a `.env` file with your node information. Set your own username/password.
 
@@ -66,7 +70,7 @@ server=1
 listen=1
 ```
 
-## Funding
+### Managing wallet balance
 
 Generate a new `.wallet.json` file:
 
@@ -92,8 +96,12 @@ When you are done minting, send the funds back:
 node . wallet send <address> <optional amount>
 ```
 
-## Minting
 
+### Minting Doginals
+
+**Note**: Please use a fresh wallet to mint to with nothing else in it until proper wallet for doginals support comes. You can get a paper wallet [here](https://www.fujicoin.org/wallet_generator?currency=Dogecoin).
+
+#### Inscribe a file
 From file:
 
 ```
@@ -116,9 +124,9 @@ node . mint DSV12KPb8m5b6YtfmqY89K6YqvdVwMYDPn dog.jpeg
 node . mint DSV12KPb8m5b6YtfmqY89K6YqvdVwMYDPn "text/plain;charset=utf-8" 576f6f6621 
 ```
 
-**Note**: Please use a fresh wallet to mint to with nothing else in it until proper wallet for doginals support comes. You can get a paper wallet [here](https://www.fujicoin.org/wallet_generator?currency=Dogecoin).
 
-## DRC-20
+
+#### Incribing DRC-20
 
 ```
 node . drc-20 mint <address> <ticker> <amount>
@@ -130,7 +138,8 @@ Examples:
 node . drc-20 mint DSV12KPb8m5b6YtfmqY89K6YqvdVwMYDPn dogi 1000
 ```
 
-## Viewing
+
+### Viewing Doginals
 
 Start the server:
 
@@ -144,7 +153,9 @@ And open your browser to:
 http://localhost:3000/tx/15f3b73df7e5c072becb1d84191843ba080734805addfccb650929719080f62e
 ```
 
-## Protocol
+### Additional Info
+
+#### Protocol
 
 The doginals protocol allows any size data to be inscribed onto subwoofers.
 
@@ -199,9 +210,10 @@ With the restriction that each inscription part after the first must start with 
 
 This allows indexers to know how much data remains.
 
-## FAQ
 
-### I'm getting ECONNREFUSED errors when minting
+### Troubleshooting
+
+#### I'm getting ECONNREFUSED errors when minting
 
 There's a problem with the node connection. Your `dogecoin.conf` file should look something like:
 
@@ -223,6 +235,6 @@ NODE_RPC_PASS=zord
 TESTNET=false
 ```
 
-### I'm getting "insufficient priority" errors when minting
+#### I'm getting "insufficient priority" errors when minting
 
 The miner fee is too low. You can increase it up by putting FEE_PER_KB=300000000 in your .env file or just wait it out. The default is 100000000 but spikes up when demand is high.
