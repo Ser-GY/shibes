@@ -2,21 +2,75 @@
 
 A minter and protocol for inscriptions on Dogecoin. 
 
-## Setup
+## ⚠️⚠️⚠️ Important ⚠️⚠️⚠️
 
-Install dependencies:
+Use this wallet for inscribing only! Always inscribe from this wallet to a different address, e.g. one you created with DogeLabs or Doggy Market. This wallet is not meant for storing funds or inscriptions.
 
-```sh
+## Prerequisites
+
+This guide requires a bit of coding knowledge and running Ubuntu on your local machine or a rented one. To use this, you'll need to use your terminal to setup a Dogecoin node, clone this repo and install Node.js on your computer.
+
+### Setup Dogceoin node
+
+Follow the instructions here to setup and sync your Dogecoin node: (https://dogecoin.com/dogepedia/how-tos/operating-a-node/#linux-instructions)
+
+How to check if your node is in sync with the network.
+On your `dogecoin` install folder, type the command `dogecoin-cli getinfo`
+
+![image](https://github.com/zachzwei/Doginals_z4ch/assets/35627271/70d2cf3a-0f5f-4564-8128-51469af9a793)
+
+Compare the "blocks" value to the current block height via a Dogecoin explorer like: https://sochain.com/DOGE
+
+![image](https://github.com/zachzwei/Doginals_z4ch/assets/35627271/b303a24b-6e51-4a1d-887a-60866895f398)
+
+
+### Install NodeJS
+
+Please head over to (https://github.com/nodesource/distributions#using-ubuntu) and follow the installation instructions.
+
+Check if they are installed by running the following commands:
+`node -v` and `npm -v`
+![image](https://github.com/zachzwei/Doginals_z4ch/assets/35627271/8cf77d41-46b8-47af-a0ae-dff566059f58)
+
+
+### Setup Shibescriptions
+
+#### Clone Doginal minter
+On your Terminal, type the following commands:
+```
+cd
+git clone https://github.com/zachzwei/doginals.git
+```
+#### Setup minter
+
+```
+cd doginals
 npm install
-```
+``` 
 
-Create a `.env` file with your node information:
+After all dependencies are solved, you can configure the environment:
+
+### Configure environment
+
+Create a `.env` file with your node information. Set your own username/password.
 
 ```
-NODE_RPC_URL=http://<ip>:<port>
-NODE_RPC_USER=<username>
-NODE_RPC_PASS=<password>
+NODE_RPC_URL=http://127.0.0.1:22555
+NODE_RPC_USER=ape
+NODE_RPC_PASS=zord
 TESTNET=false
+FEE_PER_KB=69000000
+```
+You can get the current fee per kb from [here](https://blockchair.com/).
+
+Create a `dogecoin.conf` at `/root/.dogecoin` folder. Set your own username/password.
+
+```
+rpcuser=ape
+rpcpassword=zord
+rpcport=22555
+server=1
+listen=1
 ```
 
 ## Funding
@@ -66,10 +120,22 @@ node . mint DSV12KPb8m5b6YtfmqY89K6YqvdVwMYDPn dog.jpeg
 ```
 
 ```
-node . mint DSV12KPb8m5b6YtfmqY89K6YqvdVwMYDPn "text/plain;charset=utf8" 576f6f6621 
+node . mint DSV12KPb8m5b6YtfmqY89K6YqvdVwMYDPn "text/plain;charset=utf-8" 576f6f6621 
 ```
 
 **Note**: Please use a fresh wallet to mint to with nothing else in it until proper wallet for doginals support comes. You can get a paper wallet [here](https://www.fujicoin.org/wallet_generator?currency=Dogecoin).
+
+## DRC-20
+
+```
+node . drc-20 mint <address> <ticker> <amount>
+```
+
+Examples: 
+
+```
+node . drc-20 mint DSV12KPb8m5b6YtfmqY89K6YqvdVwMYDPn dogi 1000
+```
 
 ## Viewing
 
@@ -94,7 +160,7 @@ An inscription is defined as a series of push datas:
 ```
 "ord"
 OP_1
-"text/plain; charset=utf8"
+"text/plain;charset=utf-8"
 OP_0
 "Woof!"
 ```
@@ -104,7 +170,7 @@ For doginals, we introduce a couple extensions. First, content may spread across
 ```
 "ord"
 OP_2
-"text/plain; charset=utf8"
+"text/plain;charset=utf-8"
 OP_1
 "Woof and "
 OP_0
@@ -124,7 +190,7 @@ Transaction 1:
 ```
 "ord"
 OP_2
-"text/plain; charset=utf8"
+"text/plain;charset=utf-8"
 OP_1
 "Woof and "
 ```
