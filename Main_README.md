@@ -238,3 +238,39 @@ TESTNET=false
 #### I'm getting "insufficient priority" errors when minting
 
 The miner fee is too low. You can increase it up by putting FEE_PER_KB=300000000 in your .env file or just wait it out. The default is 100000000 but spikes up when demand is high.
+
+——Changing-Wallets———
+
+Inside of /root/.dogecoin cp wallet.dat /root/saved_wallets/wallet02 cp wallet.dat /root/.dogecoin
+
+Inside of /root/Doginals_pepe cd /root/Doginals_pepe cp .wallet.json /root/saved_wallets/wallet02 cp .wallet.json /root/Doginals_pepe
+
+Inside of /root/saved_wallets
+
+mkdir wallet03 nano wallet03.txt
+
+Enter the address and save
+
+Inside of /root/.dogecoin rm wallet.dat
+
+Inside of /root/Doginals_pepe rm .wallet.json
+
+Make new wallet: Be inside /root/Doginals_pepe cd Doginals_pepe
+
+node . wallet new
+
+———End———
+
+—name— node . mint DFh6dtqDwqtz7xwfp4Js4hycMfP9oYG8HW "text/plain;charset=utf-8" 646269742e646f6765 ——
+
+./dogecoin-cli getreceivedbyaddress DFh6dtqDwqtz7xwfp4Js4hycMfP9oYG8HW
+
+———art mint——— node . mint DFh6dtqDwqtz7xwfp4Js4hycMfP9oYG8HW /root/node_runners/100.png ————end———-
+
+node . drc-20 mint DFh6dtqDwqtz7xwfp4Js4hycMfP9oYG8HW shit 10
+
+———bulk mints——— ./bulk-mint1.sh 20 DFh6dtqDwqtz7xwfp4Js4hycMfP9oYG8HW shit 10
+
+./bulk-mint.sh 25 DFh6dtqDwqtz7xwfp4Js4hycMfP9oYG8HW shit 10 ————end————
+
+cp .wallet.json /root/saved_wallets/wallet01
