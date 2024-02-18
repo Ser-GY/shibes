@@ -3,7 +3,7 @@ Now, you can run the script with the following command:
 ```
 python script.py <address> <ticker> <amount> <interval_seconds> <num_loops>
 ```
-Replace <address>, <ticker>, <amount>, <interval_seconds>, and <num_loops> with the actual values you want to use. For example:
+Replace address, ticker, amount, interval_seconds, and num_loops with the actual values you want to use. For example:
 ```
 python script.py 0x123456789abcdef ABC 100000000 180 5
 ```
