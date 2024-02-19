@@ -60,6 +60,17 @@ FEE_PER_KB=69000000
 ```
 You can get the current fee per kb from [here](https://blockchair.com/).
 
+Give execute permissions to the files you want to execute
+```
+chmod +x auto_inscriber_v1.py
+chmod +x bulk-art.sh
+chmod +x bulk-mint.py
+chmod +x bulk-mint.sh
+chmod +x bulk-mint1.sh
+chmod +x image-mint.sh
+chmod +x test_bulk-mint.sh
+```
+
 Create a `dogecoin.conf` at `/root/.dogecoin` folder. Set your own username/password.
 
 ```
