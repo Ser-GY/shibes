@@ -12,7 +12,7 @@ dogecoin_cli = "/root/dogecoin-1.14.6/bin/dogecoin-cli"
 # Function to get block hash for a transaction hash
 def get_block_hash(tx_hash):
     cmd = [dogecoin_cli, 'gettransaction', tx_hash]
-    result = http://subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, capture_output=True, text=True)
     if result.stdout:
         tx_info = json.loads(result.stdout)
         # Assuming you're looking for the block hash where the transaction was included
